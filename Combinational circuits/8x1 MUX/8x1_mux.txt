@@ -1,0 +1,37 @@
+// 8x1 mux using conditional operator
+module mux_8x1(
+    input wire[7:0]i,
+    input wire[2:0]s,
+    output wire out
+);
+    assign out=s[2] ? (s[1]?(s[0]?i[7]:i[6]):(s[0]?i[5]:i[4])) : (s[1]?(s[0]?i[3]:i[2]):(s[0]?s[1]:s[0]));    
+endmodule
+
+//8x1 mux using 4x1 mux
+module mux_8x1_4x1(
+    input wire [7:0]i,
+    input wire [2:0]s,
+    output wire out
+    );
+    wire w1,w2;
+    mux_4x1_cond d1(.i(i[3:0]), .sel(s[1:0]), .out(w1));
+    mux_4x1_cond d2(.i(i[7:4]), .sel(s[1:0]), .out(w2));
+    mux_2x1_cond d3(.in0(w1), .in1(w2), .sel(s[0]), .out(out));
+endmodule
+
+//8x1 mux using 2x1
+module mux_8x1_2x1(
+    input wire [7:0]i,
+    input wire [2:0]s,
+    output wire out
+    );
+    wire w1,w2,w3,w4,w5,w6;
+    mux_2x1_cond d1(i[0], i[1],s[0],w1);
+    mux_2x1_cond d2(i[2], i[3],s[0],w2);
+    mux_2x1_cond d3(i[4], i[5],s[0],w3);
+    mux_2x1_cond d4(i[6], i[7],s[0],w4);
+    mux_2x1_cond d5(w1,w2,s[1],w5);
+    mux_2x1_cond d6(w3,w4,s[1],w6);
+    mux_2x1_cond d7(w5,w6,s[2],out);
+         
+endmodule
